@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Avalonia.EpubComic.ViewModels"
+             xmlns:local="clr-namespace:Avalonia.EpubComic.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Avalonia.EpubComic.Views.SettingView1"
+             x:DataType="vm:SettingViewModel">
+    <Design.DataContext>
+        <vm:SettingViewModel/>  
+    </Design.DataContext>
+    <UserControl.Resources>
+        <local:BoolToIntConverter x:Key="BoolToIntConverter"/>
+    </UserControl.Resources>
+    
+    <Grid ColumnDefinitions="*,*,*">
+        <StackPanel Grid.Column="0">
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <TextBlock VerticalAlignment="Center" Margin="0,0,5,0">输出图片格式</TextBlock>
+                <ComboBox HorizontalAlignment="Stretch" Width="150" MaxWidth="300"
+                          SelectedIndex="{Binding Setting.UsePNG, Converter={StaticResource BoolToIntConverter}}">
+                    <ComboBoxItem >PNG</ComboBoxItem>
+                    <ComboBoxItem >JPG</ComboBoxItem>
+                </ComboBox>
+            </StackPanel> 
+            
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,5,0">图片色彩模式</TextBlock>
+                <ComboBox HorizontalAlignment="Stretch" Width="150" MaxWidth="300"
+                          SelectedIndex="{Binding Setting.GrayMode, Converter={StaticResource BoolToIntConverter}}">
+                    <ComboBoxItem >灰度图像</ComboBoxItem>
+                    <ComboBoxItem >彩色图像</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+            
+            <StackPanel  Orientation="Horizontal" Margin="10">
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,5,0">图片长页处理</TextBlock>
+                <ComboBox HorizontalAlignment="Stretch" Width="150" MaxWidth="300"
+                          SelectedIndex="{Binding Setting.Split, Converter={StaticResource BoolToIntConverter}}">
+                    <ComboBoxItem >长页分割</ComboBoxItem>
+                    <ComboBoxItem >长页旋转</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+        
+        <StackPanel Grid.Column="1">
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,5,0">漫画翻页模式</TextBlock>
+                <ComboBox HorizontalAlignment="Stretch" Width="150" MaxWidth="300"
+                          SelectedIndex="{Binding !Setting.MangeMode, Converter={StaticResource BoolToIntConverter}}">
+                    <ComboBoxItem>普通模式</ComboBoxItem>
+                    <ComboBoxItem>日漫模式</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,5,0">输出目标设备</TextBlock>
+                <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding Setting.DeviceList}"
+                          Width="150" MaxWidth="300"
+                          SelectedIndex="{Binding Setting.SelectedDevice}"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+    
+</UserControl>
