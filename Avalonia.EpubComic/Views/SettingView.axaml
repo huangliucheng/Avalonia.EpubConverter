@@ -3,64 +3,113 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Avalonia.EpubComic.ViewModels"
-             xmlns:local="clr-namespace:Avalonia.EpubComic.Views"
+             xmlns:tools="clr-namespace:Avalonia.EpubComic.Tools"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Avalonia.EpubComic.Views.SettingView1"
+             x:Class="Avalonia.EpubComic.Views.SettingView"
              x:DataType="vm:SettingViewModel">
     <Design.DataContext>
-        <vm:SettingViewModel/>  
+        <vm:SettingViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <local:BoolToIntConverter x:Key="BoolToIntConverter"/>
+        <tools:BoolToIntConverter x:Key="BoolToIntConverter" />
     </UserControl.Resources>
-    
+
     <Grid ColumnDefinitions="*,*,*">
         <StackPanel Grid.Column="0">
             <StackPanel Orientation="Horizontal" Margin="10">
                 <TextBlock VerticalAlignment="Center" Margin="0,0,5,0">输出图片格式</TextBlock>
                 <ComboBox HorizontalAlignment="Stretch" Width="150" MaxWidth="300"
                           SelectedIndex="{Binding Setting.UsePNG, Converter={StaticResource BoolToIntConverter}}">
-                    <ComboBoxItem >PNG</ComboBoxItem>
-                    <ComboBoxItem >JPG</ComboBoxItem>
+                    <ComboBoxItem>PNG</ComboBoxItem>
+                    <ComboBoxItem>JPG</ComboBoxItem>
                 </ComboBox>
-            </StackPanel> 
-            
+            </StackPanel>
+
             <StackPanel Orientation="Horizontal" Margin="10">
-                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,5,0">图片色彩模式</TextBlock>
+                <TextBlock VerticalAlignment="Center" Margin="0,0,5,0">图片色彩模式</TextBlock>
                 <ComboBox HorizontalAlignment="Stretch" Width="150" MaxWidth="300"
                           SelectedIndex="{Binding Setting.GrayMode, Converter={StaticResource BoolToIntConverter}}">
-                    <ComboBoxItem >灰度图像</ComboBoxItem>
-                    <ComboBoxItem >彩色图像</ComboBoxItem>
+                    <ComboBoxItem>灰度图像</ComboBoxItem>
+                    <ComboBoxItem>彩色图像</ComboBoxItem>
                 </ComboBox>
             </StackPanel>
-            
-            <StackPanel  Orientation="Horizontal" Margin="10">
-                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,5,0">图片长页处理</TextBlock>
+
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <TextBlock VerticalAlignment="Center" Margin="0,0,5,0">图片长页处理</TextBlock>
                 <ComboBox HorizontalAlignment="Stretch" Width="150" MaxWidth="300"
                           SelectedIndex="{Binding Setting.Split, Converter={StaticResource BoolToIntConverter}}">
-                    <ComboBoxItem >长页分割</ComboBoxItem>
-                    <ComboBoxItem >长页旋转</ComboBoxItem>
+                    <ComboBoxItem>长页分割</ComboBoxItem>
+                    <ComboBoxItem>长页旋转</ComboBoxItem>
                 </ComboBox>
             </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <CheckBox Margin="10" VerticalAlignment="Center"
+                          IsChecked="{Binding Setting.MarginCrop}">
+                    边缘裁剪
+                </CheckBox>
+                <CheckBox Margin="10" VerticalAlignment="Center" ToolTip.Tip="勾选此项, 将不处理图像!"
+                          IsChecked="{Binding Setting.DisProcess}">
+                    不处理图像
+                </CheckBox>
+            </StackPanel>
+
+
         </StackPanel>
-        
+
         <StackPanel Grid.Column="1">
             <StackPanel Orientation="Horizontal" Margin="10">
-                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,5,0">漫画翻页模式</TextBlock>
+                <TextBlock VerticalAlignment="Center" Margin="0,0,5,0">漫画翻页模式</TextBlock>
                 <ComboBox HorizontalAlignment="Stretch" Width="150" MaxWidth="300"
                           SelectedIndex="{Binding !Setting.MangeMode, Converter={StaticResource BoolToIntConverter}}">
                     <ComboBoxItem>普通模式</ComboBoxItem>
                     <ComboBoxItem>日漫模式</ComboBoxItem>
                 </ComboBox>
             </StackPanel>
-            
+
             <StackPanel Orientation="Horizontal" Margin="10">
-                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,5,0">输出目标设备</TextBlock>
+                <TextBlock VerticalAlignment="Center" Margin="0,0,5,0">输出目标设备</TextBlock>
                 <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding Setting.DeviceList}"
                           Width="150" MaxWidth="300"
-                          SelectedIndex="{Binding Setting.SelectedDevice}"/>
+                          SelectedIndex="{Binding Setting.SelectedDevice}"
+                          SelectionChanged="CustomDeviceProfileSelected" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <TextBlock VerticalAlignment="Center" Margin="0,0,5,0">漫画输出模式</TextBlock>
+                <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding Setting.OutputMode}"
+                          Width="150" MaxWidth="300"
+                          SelectedIndex="{Binding Setting.SelectedOutputMode}"
+                          SelectionChanged="OutputModeChanged" />
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2">
+            <StackPanel Orientation="Horizontal" Margin="10" IsEnabled="{Binding IsTargetResolutionEnabled}">
+                <TextBlock VerticalAlignment="Center" Margin="0,0,5,0">目标设备宽度</TextBlock>
+                <NumericUpDown Width="150" MaxWidth="300"
+                               Minimum="600" FormatString="0" Value="{Binding Setting.TargetWidth}"
+                               ValueChanged="TargetWidthChanged" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10" IsEnabled="{Binding IsTargetResolutionEnabled}">
+                <TextBlock VerticalAlignment="Center" Margin="0,0,5,0">目标设备高度</TextBlock>
+                <NumericUpDown Width="150" MaxWidth="300"
+                               Minimum="800" FormatString="0" Value="{Binding Setting.TargetHeight}"
+                               ValueChanged="TargetHeightChanged" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10" IsEnabled="{Binding IsOutSplitNumberVisible}">
+                <TextBlock VerticalAlignment="Center" Margin="0,0,5,0" ToolTip.Placement="Bottom"
+                           ToolTip.Tip="连载模式选择每X章节为一卷进行输出">
+                    连载分卷输出
+                </TextBlock>
+                <NumericUpDown Width="150" MaxWidth="300" FormatString="0"
+                               Minimum="1" Maximum="{Binding Setting.MaxEveryChaptersNum}"
+                               Value="{Binding Setting.EveryChaptersNum, Mode=OneWay}"
+                               LostFocus="EveryChapterNumber_LostFocus" />
             </StackPanel>
         </StackPanel>
     </Grid>
-    
+
 </UserControl>

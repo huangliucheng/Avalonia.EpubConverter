@@ -1,8 +1,41 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Avalonia.EpubComic.Views.MessageBox">
-    Welcome to Avalonia!
-</UserControl>
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Avalonia.EpubComic.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Avalonia.EpubComic.Views.MessageBox"
+        Width="200" Height="150"
+        WindowStartupLocation="CenterOwner"
+        ExtendClientAreaToDecorationsHint="False"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        Title="{Binding Title}"
+        x:DataType="vm:MessageBoxViewModel">
+
+
+    <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+
+        <StackPanel Margin="20" Spacing="20" VerticalAlignment="Center">
+            <TextBlock Text="{Binding Message}"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center" />
+
+            <Button Content="确定" Foreground="LightGray"
+                    HorizontalAlignment="Center"
+                    Width="80"
+                    Command="{Binding CloseCommand}" />
+        </StackPanel>
+    </Panel>
+
+</Window>

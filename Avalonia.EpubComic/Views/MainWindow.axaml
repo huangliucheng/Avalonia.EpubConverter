@@ -1,20 +1,64 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:Avalonia.EpubComic.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:Avalonia.EpubComic.Views"
+        xmlns:vm="clr-namespace:Avalonia.EpubComic.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Avalonia.EpubComic.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Avalonia.EpubComic">
+        Title="Avalonia.EpubComic"
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        CornerRadius="10"
+        Height="600" Width="800"
+        MinHeight="600" MinWidth="800">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+
+        <Grid RowDefinitions="30, *">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <PathIcon Data="{StaticResource ApplicationIcon}" Width="20" Height="20" Margin="10, 5, 0, 5" />
+                <TextBlock Margin="5" VerticalAlignment="Center">
+                    <Run Text="Epub Comic Converter" />
+                </TextBlock>
+            </StackPanel>
+
+
+            <Grid Grid.Row="1" RowDefinitions="*, *">
+                <Grid ColumnDefinitions="*, *" x:Name="GridList">
+                    <views:ComicFileSelectView Margin="20" DataContext="{Binding ComicFileSelectVM}" />
+                    <Border Grid.Column="1"
+                            CornerRadius="10"
+                            Margin="20"
+                            BorderBrush="Gray"
+                            BorderThickness="2"
+                            Padding="5">
+                        <views:ComicBooksListView DataContext="{Binding ComicBooksListVM}" />
+                    </Border>
+                </Grid>
+
+                <views:SettingView Grid.Row="1" DataContext="{Binding SettingVM}" />
+            </Grid>
+        </Grid>
+    </Panel>
 
 </Window>

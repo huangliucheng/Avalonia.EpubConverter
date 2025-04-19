@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.EpubComic.Views;
 
 namespace Avalonia.EpubComic.Services;
 
@@ -12,9 +13,9 @@ public class DialogService : IDialogService
         _mainWindow = mainWindow;
     }
 
-    public async Task ShowMessageBoxAsync(string title, string message)
+    public async Task ShowMessageBoxAsync(string message, string title)
     {
-        var dialog = new MessageBoxWindow(title, message);
-        await dialog.ShowDialog(_mainWindow);
+        var messageBox = new MessageBox(title, message);
+        await messageBox.ShowDialog(_mainWindow);
     }
 }

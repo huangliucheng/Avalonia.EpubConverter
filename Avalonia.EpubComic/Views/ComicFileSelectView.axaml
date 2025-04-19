@@ -2,7 +2,60 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Avalonia.EpubComic.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Avalonia.EpubComic.Views.ComicFileSelectView">
-    Welcome to Avalonia!
+             x:Class="Avalonia.EpubComic.Views.ComicFileSelectView"
+             x:DataType="vm:ComicFileSelectViewModel">
+    <Panel>
+        <StackPanel>
+            <TextBlock>漫画名称</TextBlock>
+            <Panel>
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBox Watermark="输入漫画名称"
+                             Text="{Binding ComicTitle}" />
+                    <Button Margin="5" Grid.Column="1"
+                            Command="{Binding ReplaceCommand}">
+                        <PathIcon Data="{StaticResource SemiIconRefresh}"
+                                  Width="20"
+                                  Foreground="LightGray" />
+                    </Button>
+                </Grid>
+            </Panel>
+
+            <TextBlock>漫画文件路径</TextBlock>
+            <Panel>
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBox x:Name="InputPathTextBox" Watermark="输入漫画文件路径"
+                             Text="{Binding ComicInputPath, UpdateSourceTrigger=LostFocus}" />
+                    <Button Margin="5" Grid.Column="1"
+                            Command="{Binding SelectInputPathCommand}">
+                        <PathIcon Data="{StaticResource SemiIconFolder}"
+                                  Foreground="LightGray" />
+                    </Button>
+                </Grid>
+            </Panel>
+
+            <TextBlock>漫画保存路径</TextBlock>
+            <Panel>
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBox Watermark="输入漫画保存路径"
+                             Text="{Binding ComicSavePath}" />
+                    <Button Margin="5" Grid.Column="1"
+                            Command="{Binding SelectSavePathCommand}">
+                        <PathIcon Data="{StaticResource SemiIconFolder}"
+                                  Foreground="LightGray" />
+                    </Button>
+                </Grid>
+            </Panel>
+
+            <Grid ColumnDefinitions="*,*" Margin="10">
+                <Button Grid.Column="0" x:Name="StartButton" Content="开始" Width="100" Foreground="LightGray"
+                        Command="{Binding TaskStartCommand}" IsEnabled="{Binding StartButtonEnabled}" />
+                <Button Grid.Column="1" x:Name="StopButton" Content="终止" Width="100" Foreground="LightGray"
+                        Command="{Binding TaskStopCommand}"
+                        IsEnabled="{Binding !StartButtonEnabled}" />
+            </Grid>
+        </StackPanel>
+
+    </Panel>
 </UserControl>

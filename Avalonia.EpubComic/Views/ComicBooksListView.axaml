@@ -2,7 +2,46 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Avalonia.EpubComic.ViewModels;assembly=Avalonia.EpubComic"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Avalonia.EpubComic.Views.ComicBooksListView">
-    Welcome to Avalonia!
+             x:Class="Avalonia.EpubComic.Views.ComicBooksListView"
+             x:DataType="vm:ComicBooksListViewModel">
+    <Panel>
+        <DataGrid CanUserResizeColumns="False"
+                  CanUserSortColumns="False"
+                  ItemsSource="{Binding BooksList}"
+                  IsScrollInertiaEnabled="True"
+                  IsReadOnly="True">
+            <DataGrid.ColumnHeaderTheme>
+                <ControlTheme TargetType="DataGridColumnHeader">
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </ControlTheme>
+            </DataGrid.ColumnHeaderTheme>
+            <DataGrid.Columns>
+                <DataGridTextColumn
+                    Width="*"
+                    x:DataType="vm:BookViewModel"
+                    Binding="{Binding Title}"
+                    Header="书名" />
+                <DataGridTemplateColumn
+                    Width="*"
+                    x:DataType="vm:BookViewModel"
+                    Header="进度">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ProgressBar
+                                Maximum="{Binding ProgressBar.MaxValue}"
+                                Minimum="0"
+                                IsIndeterminate="{Binding ProgressBar.IsIndeterminate}"
+                                Value="{Binding ProgressBar.CurrentValue}"
+                                ShowProgressText="True"
+                                Margin="10" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+            </DataGrid.Columns>
+
+        </DataGrid>
+    </Panel>
 </UserControl>
