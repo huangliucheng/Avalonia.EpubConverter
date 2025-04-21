@@ -10,12 +10,14 @@
         <TrimMode>link</TrimMode>
         <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
         <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
+        <ApplicationIcon>Assets/comic-book.ico</ApplicationIcon>
+        <IncludeSymbols>False</IncludeSymbols>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <DebugType>none</DebugType>
+      <DebugType>embedded</DebugType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <DebugType>none</DebugType>
+      <DebugType>embedded</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
