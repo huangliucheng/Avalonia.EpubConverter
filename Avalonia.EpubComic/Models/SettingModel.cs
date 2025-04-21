@@ -2,31 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Avalonia.EpubComic.Models;
 
-public partial class SettingModel : ObservableObject
+public class SettingModel : ObservableObject
 {
-    [ObservableProperty] private bool _disProcess;
-    [ObservableProperty] private int _everyChaptersNum = 1;
-    [ObservableProperty] private bool _grayMode;
-    [ObservableProperty] private bool _mangeMode;
-    [ObservableProperty] private bool _marginCrop;
-    [ObservableProperty] private int _maxEveryChaptersNum;
-    [ObservableProperty] private List<string> _outputMode;
+    private bool _usePNG;
+    private bool _disProcess;
+    private bool _grayMode;
+    private bool _mangeMode;
+    private bool _marginCrop;    
     private bool _rotate;
-    [ObservableProperty] private int _selectedDevice;
-    [ObservableProperty] private int _selectedOutputMode;
-
     private bool _split;
+    
+    private int _everyChaptersNum = 1;
+    private int _maxEveryChaptersNum;
+    private int _selectedDevice;
+    private int _selectedOutputMode;
+    private int _targetHeight;
+    private int _targetWidth;
 
-    [ObservableProperty] private int _targetHeight;
-    [ObservableProperty] private int _targetWidth;
-
-    [ObservableProperty] private bool _usePNG;
-
+    private List<string> _outputMode; 
+    
     public SettingModel()
     {
         UsePNG = true;
@@ -62,7 +62,80 @@ public partial class SettingModel : ObservableObject
 
         OutputMode = ["单本模式", "连载模式", "分卷模式"];
     }
+    
+    public bool UsePNG
+    {
+        get => _usePNG;
+        set => SetProperty(ref _usePNG, value);
+    }
+    public bool GrayMode
+    {
+        get => _grayMode;
+        set => SetProperty(ref _grayMode, value);
+    }
+    public bool MarginCrop
+    {
+        get => _marginCrop;
+        set => SetProperty(ref _marginCrop, value);
+    }
+    public bool MangeMode
+    {
+        get => _mangeMode;
+        set => SetProperty(ref _mangeMode, value);
+    }
+    public bool DisProcess
+    {
+        get => _disProcess;
+        set => SetProperty(ref _disProcess, value);
+    }
 
+    public int SelectedDevice
+    {
+        get => _selectedDevice;
+        set => SetProperty(ref _selectedDevice, value);
+    }
+    public int TargetWidth
+    {
+        get => _targetWidth;
+        set => SetProperty(ref _targetWidth, value);
+    }
+    public int TargetHeight
+    {
+        get => _targetHeight;
+        set => SetProperty(ref _targetHeight, value);
+    }
+    public int SelectedOutputMode
+    {
+        get => _selectedOutputMode;
+        set
+        {
+           SetProperty(ref _selectedOutputMode, value); 
+           OnSelectedOutputModeChanged(value);
+        } 
+    }
+
+    public List<string> OutputMode
+    {
+        get => _outputMode;
+        set => SetProperty(ref _outputMode, value);
+    }
+
+    public int EveryChaptersNum
+    {
+        get => _everyChaptersNum;
+        set
+        {
+            SetProperty(ref _everyChaptersNum, value);
+            OnEveryChaptersNumChanged(value);
+        }
+    }
+
+    public int MaxEveryChaptersNum
+    {
+        get => _maxEveryChaptersNum;
+        set => SetProperty(ref _maxEveryChaptersNum, value);
+    }
+    
     public bool Split
     {
         get => _split;
@@ -86,85 +159,77 @@ public partial class SettingModel : ObservableObject
     public List<string> DeviceList { get; set; }
     public Dictionary<string, int[]> DeviceProfile { get; set; }
 
-    // 静态工厂方法，从JSON创建实例
-    public static async Task<SettingModel> CreateFromJsonAsync(string? filePath = null)
+// 从JSON文件加载设置到当前实例
+public async Task LoadFromJsonAsync()
+{
+    var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
+
+    try
     {
-        filePath ??= Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "settings.json");
-
-        // 创建默认实例
-        var model = new SettingModel();
-
-        try
+        if (File.Exists(filePath))
         {
-            if (File.Exists(filePath))
-            {
-                // 读取JSON文件
-                var json = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var loadedModel = JsonSerializer.Deserialize<SettingModel>(json, options);
+            // 读取JSON文件
+            var json = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
+            var loadedModel = JsonSerializer.Deserialize(json, SettingModelJsonContext.Default.SettingModel);
 
-                // 如果成功加载，复制值到当前实例
-                if (loadedModel != null)
-                {
-                    model.UsePNG = loadedModel.UsePNG;
-                    model.GrayMode = loadedModel.GrayMode;
-                    model.MarginCrop = loadedModel.MarginCrop;
-                    model.MangeMode = loadedModel.MangeMode;
-                    model.DisProcess = loadedModel.DisProcess;
-                    model.Split = loadedModel.Split;
-                    model.Rotate = loadedModel.Rotate;
-                    model.TargetWidth = loadedModel.TargetWidth;
-                    model.TargetHeight = loadedModel.TargetHeight;
-                    model.SelectedDevice = loadedModel.SelectedDevice;
-                    model.SelectedOutputMode = loadedModel.SelectedOutputMode;
-                }
-            }
-            else
+            // 如果成功加载，复制值到当前实例
+            if (loadedModel != null)
             {
-                // 保存默认设置到文件
-                await model.SaveSettingsAsync(filePath);
+                UsePNG = loadedModel.UsePNG;
+                GrayMode = loadedModel.GrayMode;
+                MarginCrop = loadedModel.MarginCrop;
+                MangeMode = loadedModel.MangeMode;
+                DisProcess = loadedModel.DisProcess;
+                Split = loadedModel.Split;
+                Rotate = loadedModel.Rotate;
+                TargetWidth = loadedModel.TargetWidth;
+                TargetHeight = loadedModel.TargetHeight;
+                SelectedDevice = loadedModel.SelectedDevice;
+                SelectedOutputMode = loadedModel.SelectedOutputMode;
             }
         }
-        catch (Exception ex)
+        else
         {
-            Console.WriteLine($"加载设置时出错: {ex.Message}");
+            // 保存默认设置到文件
+            await SaveSettingsAsync().ConfigureAwait(false);
         }
-
-        return model;
     }
+    catch (Exception ex)
+    {
+        throw new Exception($"加载设置时出错: {ex.Message}");
+    }
+}
 
     // 保存设置到JSON文件
-    public async Task SaveSettingsAsync(string? filePath = null)
+public async Task SaveSettingsAsync()
     {
         try
         {
-            filePath ??= Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "settings.json");
-
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-
-            var json = JsonSerializer.Serialize(this, options);
-            await File.WriteAllTextAsync(filePath, json);
+            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
+            var json = JsonSerializer.Serialize(this, SettingModelJsonContext.Default.SettingModel);
+            await File.WriteAllTextAsync(filePath, json).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"保存设置时出错: {ex.Message}");
+            throw new Exception("保存出错: " + ex.Message);
         }
     }
 
     public event EventHandler<int> EveryChaptersNumChanged;
     public event EventHandler<int> SelectedOutputModeChanged;
 
-    partial void OnEveryChaptersNumChanged(int value)
+    private void OnEveryChaptersNumChanged(int value)
     {
         EveryChaptersNumChanged?.Invoke(this, value);
     }
 
-    partial void OnSelectedOutputModeChanged(int value)
+    private void OnSelectedOutputModeChanged(int value)
     {
         SelectedOutputModeChanged?.Invoke(this, value);
     }
+}
+
+[JsonSerializable(typeof(SettingModel))]
+public partial class SettingModelJsonContext : JsonSerializerContext
+{
 }

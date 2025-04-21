@@ -12,11 +12,13 @@ public partial class SettingViewModel : ViewModelBase
 
     public SettingViewModel()
     {
-        InitializeSettingAsync().Wait();
+        Setting = new SettingModel();
+        LoadSettingsAsync().Wait();
     }
 
-    private async Task InitializeSettingAsync()
+
+    private async Task LoadSettingsAsync()
     {
-        Setting = await SettingModel.CreateFromJsonAsync().ConfigureAwait(false);
+        await Setting.LoadFromJsonAsync().ConfigureAwait(false);
     }
 }
